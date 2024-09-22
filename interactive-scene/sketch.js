@@ -4,34 +4,34 @@
 let playerX;
 let playerY;
 let playerSize = 50;
-let speed;
+let defultSpeed = 10;
+let speed = defultSpeed;
 let dashCooldown = 240;
-let dashSpeed = 20;
+let dashTimer = dashCooldown;
+let dashSpeed = 30;
 let dashLength = 30;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   playerX = width / 2;
   playerY = height / 2;
-  fill("black")
+  fill("red")
 }
 
 function draw() {
-  background(220);
-  if (dashCooldown > 0) {
-    dashCooldown--;
-    speed = 10;
-  } else if (dashCooldown < 0) {
-    if (dashCooldown < -1) {
-      dashCooldown = 240;
-    } else {
-      dashCooldown++;
-    }
+  background(256);
+  if (dashTimer > 0) {
+    dashTimer--;
+  } else if (dashTimer === -1) {
+    speed = defultSpeed;
+    dashTimer = dashCooldown;
+  } else if (dashTimer < -1) {
+    dashTimer++;
   }
-
-  if (keyIsDown(32) && dashCooldown === 0); {
+  
+  if (keyIsDown(32) && dashTimer === 0) {
     speed = dashSpeed;
-    dashCooldown = -dashLength;
+    dashTimer = -dashLength;
   }
 
 
