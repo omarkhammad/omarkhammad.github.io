@@ -3,17 +3,18 @@
 
 let playerX;
 let playerY;
-let playerSize = 30;
-let speed = 15;
+let playerSize = 20;
+let maxSpeed = 15;
+let minSpeed = 0.5;
 let dx = 0;
 let dy = 0;
 let acc = 2;
-let decc = 0.75;
-let dashCooldown = 120;
+let decc = 0.9;
+let dashCooldown = 90;
 let dashTimer = 0;
-let dashMultiplier = 4;
+let dashMultiplier = 5;
 let dash = 1;
-let dashLength = 8;
+let dashLength = 6;
 
 
 
@@ -35,42 +36,46 @@ function draw() {
     dashTimer++;
   }
 
-  if (keyIsDown(32) && dashTimer === 0) {
+  if (mouseIsPressed && dashTimer === 0) {
     dash = dashMultiplier;
     dashTimer = -dashLength;
   }
 
   if (keyIsDown(87)) { //W
-    if (dy > -speed){
+    if (dy > -maxSpeed){
       dy -= acc;
     } else{
-      dy = -speed;
+      dy = -maxSpeed;
     }
   } else if (keyIsDown(83)) { //S
-    if (dy < speed){
+    if (dy < maxSpeed){
       dy += acc;
     } else{
-      dy = speed;
+      dy = maxSpeed;
     }
-  } else{
+  } else if (Math.abs(dy) > minSpeed){
     dy = dy * decc;
+  } else{
+    dy = 0
   }
   
   
   if (keyIsDown(65)) { //A
-    if (dx > -speed){
+    if (dx > -maxSpeed){
       dx -= acc;
     } else{
-      dx = -speed;
+      dx = -maxSpeed;
     }
   } else if (keyIsDown(68)) { //D
-    if (dx < speed){
+    if (dx < maxSpeed){
       dx += acc;
     } else{
-      dx = speed;
+      dx = maxSpeed;
     }
-  } else{
+  } else if (Math.abs(dx) > minSpeed){
     dx = dx * decc;
+  } else{
+    dx = 0
   }
 
 
@@ -88,5 +93,6 @@ function draw() {
     playerY = height - playerSize;
   }
   
+
   circle(playerX, playerY, playerSize * 2);
 }
