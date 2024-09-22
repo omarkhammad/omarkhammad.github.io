@@ -3,48 +3,90 @@
 
 let playerX;
 let playerY;
-let playerSize = 50;
-let defultSpeed = 10;
-let speed = defultSpeed;
-let dashCooldown = 240;
-let dashTimer = dashCooldown;
-let dashSpeed = 30;
-let dashLength = 30;
+let playerSize = 30;
+let speed = 15;
+let dx = 0;
+let dy = 0;
+let acc = 2;
+let decc = 0.75;
+let dashCooldown = 120;
+let dashTimer = 0;
+let dashMultiplier = 4;
+let dash = 1;
+let dashLength = 8;
+
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   playerX = width / 2;
   playerY = height / 2;
-  fill("red")
+  fill("green")
 }
 
 function draw() {
-  background(256);
+  background("white");
   if (dashTimer > 0) {
     dashTimer--;
   } else if (dashTimer === -1) {
-    speed = defultSpeed;
+    dash = 1;
     dashTimer = dashCooldown;
   } else if (dashTimer < -1) {
     dashTimer++;
   }
-  
+
   if (keyIsDown(32) && dashTimer === 0) {
-    speed = dashSpeed;
+    dash = dashMultiplier;
     dashTimer = -dashLength;
   }
 
-
   if (keyIsDown(87)) { //W
-    playerY -= speed;
+    if (dy > -speed){
+      dy -= acc;
+    } else{
+      dy = -speed;
+    }
   } else if (keyIsDown(83)) { //S
-    playerY += speed;
+    if (dy < speed){
+      dy += acc;
+    } else{
+      dy = speed;
+    }
+  } else{
+    dy = dy * decc;
   }
+  
+  
   if (keyIsDown(65)) { //A
-    playerX -= speed;
+    if (dx > -speed){
+      dx -= acc;
+    } else{
+      dx = -speed;
+    }
   } else if (keyIsDown(68)) { //D
-    playerX += speed;
+    if (dx < speed){
+      dx += acc;
+    } else{
+      dx = speed;
+    }
+  } else{
+    dx = dx * decc;
   }
 
-  circle(playerX, playerY, playerSize);
+
+  playerX += dx * dash;
+  playerY += dy * dash;
+
+  if (playerX < playerSize) {
+    playerX = playerSize;
+  } else if (playerX > width - playerSize) {
+    playerX = width - playerSize;
+  }
+  if (playerY < playerSize) {
+    playerY = playerSize;
+  } else if (playerY > height - playerSize) {
+    playerY = height - playerSize;
+  }
+  
+  circle(playerX, playerY, playerSize * 2);
 }
