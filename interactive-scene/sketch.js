@@ -24,7 +24,7 @@ let barWidthScale = 3;
 let rows;
 let lazerColor;
 let lazerOpacity = 128;
-let rowHeight = 50;
+let rowHeight = 5;
 
 
 function playerDash(){
@@ -97,6 +97,16 @@ function playerMove(){
 }
 
 
+function lazers(){
+  lazerColor.setAlpha(lazerOpacity);
+  fill(lazerColor);
+  rows = 5;
+  for (let i = 0; i < rows; i++){
+    rect(0, playerSize + barHeight + i * (height - barHeight) / rows, width, rowHeight + playerSize + barHeight + i * (height - barHeight) / rows);
+  }
+}
+
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
@@ -104,7 +114,6 @@ function setup() {
   playerX = width / 2;
   playerY = height / 2;
 
-  rows = 5;
   lazerColor = color(255, 128, 128);
 }
 
@@ -113,6 +122,8 @@ function draw() {
   background("black");
   fill("white")
   rect(0, barHeight, width, height - barHeight, playerSize)
+
+  lazers();
 
   fill("black")
   rect(0, 0, width, barHeight)
@@ -128,10 +139,4 @@ function draw() {
 
   fill("green")
   circle(playerX, playerY, playerSize * 2,);
-
-  //lazerColor.setAlpha(lazerOpacity);
-  //fill(lazerColor);
-  //for (let i = 0; i < rows; i++){
-  //  rect(0, (height - barHieght) / rows);
-  //}
 }
