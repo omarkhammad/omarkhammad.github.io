@@ -19,6 +19,7 @@ let dashLength = 8;
 
 let barHeight = 60;
 let barPadding = 10;
+let barWidthScale = 3;
 
 let rows;
 let lazerColor;
@@ -26,31 +27,7 @@ let lazerOpacity = 128;
 let rowHeight = 50;
 
 
-function setup() {
-  createCanvas(windowWidth, windowHeight);
-  noStroke();
-
-  playerX = width / 2;
-  playerY = height / 2;
-
-  rows = [random(barHeight, height - rowHeight), random(barHeight, height - rowHeight)];
-  lazerColor = color(255, 128, 128);
-}
-
-function draw() {
-  background("black");
-  fill("white")
-  rect(0, barHeight, width, height - barHeight, playerSize)
-
-  fill("black")
-  rect(0, 0, width, barHeight)
-  fill("grey")
-  rect(barPadding, barPadding, dashCooldown * 3, barHeight - barPadding * 2)
-  fill("lime")
-  rect(barPadding, barPadding, (dashCooldown - dashTimer) * 3 * (dashTimer >= 0), barHeight - barPadding * 2)
-  
-
-
+function playerDash(){
   if (dashTimer > 0) {
     dashTimer--;
   } else if (dashTimer === -1) {
@@ -64,8 +41,10 @@ function draw() {
     dash = dashMultiplier;
     dashTimer = -dashLength;
   }
+}
 
 
+function playerMove(){
   if (keyIsDown(87)) { //W
     if (dy > -maxSpeed) {
       dy -= acc;
@@ -83,8 +62,6 @@ function draw() {
   } else {
     dy = 0
   }
-
-
 
   if (keyIsDown(65)) { //A
     if (dx > -maxSpeed) {
@@ -104,7 +81,6 @@ function draw() {
     dx = 0
   }
 
-
   playerX += dx * dash;
   playerY += dy * dash;
 
@@ -118,15 +94,44 @@ function draw() {
   } else if (playerY > height - playerSize) {
     playerY = height - playerSize;
   }
+}
 
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  noStroke();
+
+  playerX = width / 2;
+  playerY = height / 2;
+
+  rows = 5;
+  lazerColor = color(255, 128, 128);
+}
+
+
+function draw() {
+  background("black");
+  fill("white")
+  rect(0, barHeight, width, height - barHeight, playerSize)
+
+  fill("black")
+  rect(0, 0, width, barHeight)
+  fill("grey")
+  rect(barPadding, barPadding, dashCooldown * barWidthScale, barHeight - barPadding * 2)
+  fill("lime")
+  rect(barPadding, barPadding, (dashCooldown - dashTimer) * barWidthScale * (dashTimer >= 0), barHeight - barPadding * 2)
+  
+
+  playerDash();
+
+  playerMove();
 
   fill("green")
-
   circle(playerX, playerY, playerSize * 2,);
 
-  lazerColor.setAlpha(lazerOpacity);
-  fill(lazerColor);
-  for (let i = 0; i < rows.length; i++){
-    rect(0, rows[i], width, rowHeight);
-  }
+  //lazerColor.setAlpha(lazerOpacity);
+  //fill(lazerColor);
+  //for (let i = 0; i < rows; i++){
+  //  rect(0, (height - barHieght) / rows);
+  //}
 }
