@@ -4,12 +4,12 @@
 let playerX;
 let playerY;
 let playerSize = 20;
-let maxSpeed = 12;
+let maxSpeed = 8;
 let minSpeed = 0.75;
 let dx = 0;
 let dy = 0;
 let acc = 2;
-let decc = 0.9;
+let decc = 0.8;
 
 let dashCooldown = 60;
 let dashTimer = 0;
@@ -22,9 +22,21 @@ let barPadding = 10;
 let barWidthScale = 3;
 
 let rows;
+let columns;
+let minRows = 3;
+let maxRows = 10;
+let minColumns = 3;
+let maxColumns = 10;
+let lazerSize = 50;
 let lazerColor;
-let lazerOpacity = 128;
-let rowHeight = 5;
+let lowLazerOpacity = 128;
+let highLazerOpacity = 255;
+let lazerCooldownTime = 70;
+let lazerTimer = lazerCooldownTime;
+let lazerMode = 0;
+let lazerWarningTime = 80;
+let lazerOnTime = 120;
+
 
 
 function playerDash(){
@@ -46,15 +58,13 @@ function playerDash(){
 
 function playerMove(){
   if (keyIsDown(87)) { //W
-    if (dy > -maxSpeed) {
-      dy -= acc;
-    } else {
+    dy -= acc;
+    if (dy < -maxSpeed) {
       dy = -maxSpeed;
     }
   } else if (keyIsDown(83)) { //S
-    if (dy < maxSpeed) {
-      dy += acc;
-    } else {
+    dy += acc;
+    if (dy > maxSpeed) {
       dy = maxSpeed;
     }
   } else if (Math.abs(dy) > minSpeed) {
@@ -64,15 +74,13 @@ function playerMove(){
   }
 
   if (keyIsDown(65)) { //A
-    if (dx > -maxSpeed) {
-      dx -= acc;
-    } else {
+    dx -= acc;
+    if (dx < -maxSpeed) {
       dx = -maxSpeed;
     }
   } else if (keyIsDown(68)) { //D
-    if (dx < maxSpeed) {
-      dx += acc;
-    } else {
+    dx += acc;
+    if (dx > maxSpeed) {
       dx = maxSpeed;
     }
   } else if (Math.abs(dx) > minSpeed) {
@@ -98,12 +106,56 @@ function playerMove(){
 
 
 function lazers(){
-  lazerColor.setAlpha(lazerOpacity);
-  fill(lazerColor);
-  rows = 5;
-  for (let i = 0; i < rows; i++){
-    rect(0, playerSize + barHeight + i * (height - barHeight) / rows, width, rowHeight + playerSize + barHeight + i * (height - barHeight) / rows);
+  lazerTimer--;
+  if (!lazerTimer){
+    rows = random(minRows, maxRows)
+    columns = random(minColumns, maxColumns)
+    lazerMode = 1;
+    lazerColor.setAlpha(lowLazerOpacity);
+
+  } else if (lazerTimer < -lazerOnTime){
+    lazerTimer = lazerCooldownTime
+    lazerMode = 0;
+
+  } else if (lazerTimer < -lazerWarningTime){
+    lazerColor.setAlpha(highLazerOpacity);
+    lazerMode = 2;
+}
+
+  
+  if (lazerMode){
+    fill(lazerColor);
+    for (let row = 0; row < rows; row++){
+      rect(0, playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows, width, lazerSize);
+    }
+
+    for (let column = 0; column < columns; column++){
+      rect(playerSize + column * (width - playerSize * 2) / columns, barHeight, lazerSize, width - barHeight);
+    }
   }
+}
+
+
+function topBar(){
+  fill("black")
+  rect(0, 0, width, barHeight)
+  fill("grey")
+  rect(barPadding, barPadding, dashCooldown * barWidthScale, barHeight - barPadding * 2)
+  fill("lime")
+  rect(barPadding, barPadding, (dashCooldown - dashTimer) * barWidthScale * (dashTimer >= 0), barHeight - barPadding * 2)
+}
+
+
+function drawCircle(){
+  fill("green")
+  circle(playerX, playerY, playerSize * 2,);
+}
+
+
+function drawBackground(){
+  background("black");
+  fill("white")
+  rect(0, barHeight, width, height - barHeight, playerSize)
 }
 
 
@@ -114,29 +166,20 @@ function setup() {
   playerX = width / 2;
   playerY = height / 2;
 
-  lazerColor = color(255, 128, 128);
+  lazerColor = color(230, 0, 0);
 }
 
 
 function draw() {
-  background("black");
-  fill("white")
-  rect(0, barHeight, width, height - barHeight, playerSize)
+  drawBackground();
 
-  lazers();
-
-  fill("black")
-  rect(0, 0, width, barHeight)
-  fill("grey")
-  rect(barPadding, barPadding, dashCooldown * barWidthScale, barHeight - barPadding * 2)
-  fill("lime")
-  rect(barPadding, barPadding, (dashCooldown - dashTimer) * barWidthScale * (dashTimer >= 0), barHeight - barPadding * 2)
-  
+  topBar();
 
   playerDash();
 
   playerMove();
 
-  fill("green")
-  circle(playerX, playerY, playerSize * 2,);
+  drawCircle();
+
+  lazers();
 }
