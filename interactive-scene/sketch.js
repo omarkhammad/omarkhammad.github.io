@@ -9,8 +9,9 @@ let minSpeed = 0.75;
 let dx = 0;
 let dy = 0;
 let acc = 2;
-let decc = 0.7;
-let playerHealth = 100;
+let decc = 0.65;
+let playerHealth = 3;
+let playerHurt = false;
 
 let dashCooldown = 60;
 let dashTimer = 0;
@@ -113,7 +114,6 @@ function lazers(){
     columns = random(minColumns, maxColumns)
     lazerMode = 1;
     lazerColor.setAlpha(lowLazerOpacity);
-    lazerSize = (width - playerSize * 2)/ rows
 
   } else if (lazerTimer < -lazerOnTime){
     lazerTimer = lazerCooldownTime
@@ -129,15 +129,17 @@ function lazers(){
     fill(lazerColor);
     for (let row = 0; row < rows; row++){
       rect(0, playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows, width, lazerSize);
-      if (lazerMode === 2 && playerY - playerSize < lazerSize + playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows && playerY + playerSize > playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows){
-        console.log("wow")
+      if (!playerHurt && lazerMode === 2 && playerY - playerSize < lazerSize + playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows && playerY + playerSize > playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows){
+        playerHurt = true;
+        playerHealth--;
       }
     }
 
     for (let column = 0; column < columns; column++){
       rect(playerSize + column * (width - playerSize * 2) / columns, barHeight, lazerSize, width - barHeight);
-      if (lazerMode === 2 && playerX - playerSize < lazerSize + playerSize + column * (width - playerSize * 2) / columns && playerX + playerSize > playerSize + column * (width - playerSize * 2) / columns){
-        console.log("mom")
+      if (!playerHurt && lazerMode === 2 && playerX - playerSize < lazerSize + playerSize + column * (width - playerSize * 2) / columns && playerX + playerSize > playerSize + column * (width - playerSize * 2) / columns){
+        playerHurt = true;
+        playerHealth--;
       }
     }
   }
