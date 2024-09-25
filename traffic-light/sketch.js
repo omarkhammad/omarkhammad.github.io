@@ -29,22 +29,26 @@ function drawOutlineOfLights() {
 
   if (millis() % cycleTime > yellowTime) {
     lightState = 2;
-  } else if (millis() % cycleTime > redTime) {
+  }
+  else if (millis() % cycleTime > redTime) {
     lightState = 1;
-  } else {
+  }
+  else {
     lightState = 0;
   }
 
 
   //lights
   if (!lightState) {
-    fill("red");
-    ellipse(width / 2, height / 2 - 65, 50, 50); //top
-  } else if (lightState === 1) {
-    fill("yellow");
-    ellipse(width / 2, height / 2, 50, 50); //middle
-  } else {
     fill("green");
     ellipse(width / 2, height / 2 + 65, 50, 50); //bottom
+  }
+  else if (lightState === 1) {
+    fill("yellow");
+    ellipse(width / 2, height / 2, 50, 50); //middle
+  }
+  else {
+    fill("red");
+    ellipse(width / 2, height / 2 - 65, 50, 50); //top
   }
 }

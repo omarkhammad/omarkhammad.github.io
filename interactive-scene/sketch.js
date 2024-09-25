@@ -4,12 +4,15 @@
 let playerX;
 let playerY;
 let playerSize = 20;
-let maxSpeed = 8;
+let maxSpeed = 8/5;
 let minSpeed = 0.75;
 let dx = 0;
 let dy = 0;
 let acc = 2;
-let decc = 0.65;
+let decc = 0.6;
+let playerSquish = 0;
+let playerSquishSpeed = 4;
+let playerMaxSquish = playerSize;
 let playerHealth = 3;
 let playerHurt = false;
 
@@ -37,17 +40,18 @@ let lazerCooldownTime = 70;
 let lazerTimer = lazerCooldownTime;
 let lazerMode = 0;
 let lazerWarningTime = 80;
-let lazerOnTime = 120;
+let lazerOnTime = 12000;
 
 
-
-function playerDash(){
+function playerDash() {
   if (dashTimer > 0) {
     dashTimer--;
-  } else if (dashTimer === -1) {
+  }
+  else if (dashTimer === -1) {
     dash = 1;
     dashTimer = dashCooldown;
-  } else if (dashTimer < -1) {
+  }
+  else if (dashTimer < -1) {
     dashTimer++;
   }
 
@@ -58,21 +62,24 @@ function playerDash(){
 }
 
 
-function playerMove(){
+function playerMove() {
   if (keyIsDown(87)) { //W
     dy -= acc;
     if (dy < -maxSpeed) {
       dy = -maxSpeed;
     }
-  } else if (keyIsDown(83)) { //S
+  }
+  else if (keyIsDown(83)) { //S
     dy += acc;
     if (dy > maxSpeed) {
       dy = maxSpeed;
     }
-  } else if (Math.abs(dy) > minSpeed) {
+  }
+  else if (Math.abs(dy) > minSpeed) {
     dy = dy * decc;
-  } else {
-    dy = 0
+  }
+  else {
+    dy = 0;
   }
 
   if (keyIsDown(65)) { //A
@@ -80,15 +87,18 @@ function playerMove(){
     if (dx < -maxSpeed) {
       dx = -maxSpeed;
     }
-  } else if (keyIsDown(68)) { //D
+  }
+  else if (keyIsDown(68)) { //D
     dx += acc;
     if (dx > maxSpeed) {
       dx = maxSpeed;
     }
-  } else if (Math.abs(dx) > minSpeed) {
+  }
+  else if (Math.abs(dx) > minSpeed) {
     dx = dx * decc;
-  } else {
-    dx = 0
+  }
+  else {
+    dx = 0;
   }
 
   playerX += dx * dash;
@@ -96,49 +106,77 @@ function playerMove(){
 
   if (playerX < playerSize) {
     playerX = playerSize;
-  } else if (playerX > width - playerSize) {
+  }
+  else if (playerX > width - playerSize) {
     playerX = width - playerSize;
   }
   if (playerY < playerSize + barHeight) {
     playerY = playerSize + barHeight;
-  } else if (playerY > height - playerSize) {
+  }
+  else if (playerY > height - playerSize) {
     playerY = height - playerSize;
   }
 }
 
 
-function lazers(){
+function mouseWheel(event) {
+  if (event.delta < 0) {
+    playerSquish += playerSquishSpeed;
+    if (playerSquish > playerMaxSquish){
+      playerSquish = playerMaxSquish;
+    }
+  }
+  else {
+    playerSquish -= playerSquishSpeed;
+    if (playerSquish < -playerMaxSquish){
+      playerSquish = -playerMaxSquish;
+    }
+  }
+}
+
+
+function drawCircle() {
+  fill("green");
+  ellipse(playerX, playerY, playerSize * 2 - playerSquish, playerSize * 2 + playerSquish);
+}
+
+
+function lazers() {
   lazerTimer--;
-  if (!lazerTimer){
-    rows = random(minRows, maxRows)
-    columns = random(minColumns, maxColumns)
+  if (!lazerTimer) {
+    rows = random(minRows, maxRows);
+    columns = random(minColumns, maxColumns);
     lazerMode = 1;
     lazerColor.setAlpha(lowLazerOpacity);
 
-  } else if (lazerTimer < -lazerOnTime){
-    lazerTimer = lazerCooldownTime
+  }
+  else if (lazerTimer < -lazerOnTime) {
+    lazerTimer = lazerCooldownTime;
     lazerMode = 0;
 
-  } else if (lazerTimer < -lazerWarningTime){
+  }
+  else if (lazerTimer < -lazerWarningTime) {
     lazerColor.setAlpha(highLazerOpacity);
     lazerMode = 2;
-}
+  }
 
-  
-  if (lazerMode){
+
+  if (lazerMode) {
     fill(lazerColor);
-    for (let row = 0; row < rows; row++){
+    for (let row = 0; row < rows; row++) {
       rect(0, playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows, width, lazerSize);
-      if (!playerHurt && lazerMode === 2 && playerY - playerSize < lazerSize + playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows && playerY + playerSize > playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows){
-        playerHurt = true;
+      if (!playerHurt && lazerMode === 2 && playerY - playerSize - playerSquish < lazerSize + playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows && playerY + playerSize + playerSquish > playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows) {
+        //playerHurt = true;
+        console.log(playerSquish);
         playerHealth--;
       }
     }
 
-    for (let column = 0; column < columns; column++){
-      rect(playerSize + column * (width - playerSize * 2) / columns, barHeight, lazerSize, width - barHeight);
-      if (!playerHurt && lazerMode === 2 && playerX - playerSize < lazerSize + playerSize + column * (width - playerSize * 2) / columns && playerX + playerSize > playerSize + column * (width - playerSize * 2) / columns){
-        playerHurt = true;
+    for (let column = 0; column < columns; column++) {
+      rect(playerSize + column * (width - playerSize * 2) / columns, barHeight, lazerSize, height - barHeight);
+      if (!playerHurt && lazerMode === 2 && playerX - playerSize < lazerSize + playerSize + column * (width - playerSize * 2) / columns && playerX + playerSize > playerSize + column * (width - playerSize * 2) / columns) {
+        //playerHurt = true;
+        console.log("youch");
         playerHealth--;
       }
     }
@@ -146,26 +184,20 @@ function lazers(){
 }
 
 
-function topBar(){
-  fill("black")
-  rect(0, 0, width, barHeight)
-  fill("grey")
-  rect(barPadding, barPadding, dashCooldown * barWidthScale, barHeight - barPadding * 2)
-  fill("lime")
-  rect(barPadding, barPadding, (dashCooldown - dashTimer) * barWidthScale * (dashTimer >= 0), barHeight - barPadding * 2)
+function topBar() {
+  fill("black");
+  rect(0, 0, width, barHeight);
+  fill("grey");
+  rect(barPadding, barPadding, dashCooldown * barWidthScale, barHeight - barPadding * 2);
+  fill("lime");
+  rect(barPadding, barPadding, (dashCooldown - dashTimer) * barWidthScale * (dashTimer >= 0), barHeight - barPadding * 2);
 }
 
 
-function drawCircle(){
-  fill("green")
-  circle(playerX, playerY, playerSize * 2,);
-}
-
-
-function drawBackground(){
+function drawBackground() {
   background("black");
-  fill("white")
-  rect(0, barHeight, width, height - barHeight, playerSize)
+  fill("white");
+  rect(0, barHeight, width, height - barHeight, playerSize);
 }
 
 
