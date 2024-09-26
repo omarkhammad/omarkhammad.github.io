@@ -4,7 +4,7 @@
 let playerX;
 let playerY;
 let playerSize = 20;
-let maxSpeed = 8/5;
+let maxSpeed = 5;
 let minSpeed = 0.75;
 let dx = 0;
 let dy = 0;
@@ -40,7 +40,7 @@ let lazerCooldownTime = 70;
 let lazerTimer = lazerCooldownTime;
 let lazerMode = 0;
 let lazerWarningTime = 80;
-let lazerOnTime = 12000;
+let lazerOnTime = 120;
 
 
 function playerDash() {
@@ -165,18 +165,16 @@ function lazers() {
     fill(lazerColor);
     for (let row = 0; row < rows; row++) {
       rect(0, playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows, width, lazerSize);
-      if (!playerHurt && lazerMode === 2 && playerY - playerSize - playerSquish < lazerSize + playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows && playerY + playerSize + playerSquish > playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows) {
-        //playerHurt = true;
-        console.log(playerSquish);
+      if (!playerHurt && lazerMode === 2 && playerY - playerSize - playerSquish / 2 < lazerSize + playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows && playerY + playerSize + playerSquish / 2 > playerSize + barHeight + row * (height - barHeight - playerSize * 2) / rows) {
+        playerHurt = true;
         playerHealth--;
       }
     }
 
     for (let column = 0; column < columns; column++) {
       rect(playerSize + column * (width - playerSize * 2) / columns, barHeight, lazerSize, height - barHeight);
-      if (!playerHurt && lazerMode === 2 && playerX - playerSize < lazerSize + playerSize + column * (width - playerSize * 2) / columns && playerX + playerSize > playerSize + column * (width - playerSize * 2) / columns) {
-        //playerHurt = true;
-        console.log("youch");
+      if (!playerHurt && lazerMode === 2 && playerX - playerSize + playerSquish / 2 < lazerSize + playerSize + column * (width - playerSize * 2) / columns && playerX + playerSize - playerSquish / 2 > playerSize + column * (width - playerSize * 2) / columns) {
+        playerHurt = true;
         playerHealth--;
       }
     }
@@ -187,10 +185,18 @@ function lazers() {
 function topBar() {
   fill("black");
   rect(0, 0, width, barHeight);
+
   fill("grey");
-  rect(barPadding, barPadding, dashCooldown * barWidthScale, barHeight - barPadding * 2);
-  fill("lime");
-  rect(barPadding, barPadding, (dashCooldown - dashTimer) * barWidthScale * (dashTimer >= 0), barHeight - barPadding * 2);
+  rect(barPadding, barPadding, dashCooldown * barWidthScale, barHeight - barPadding * 2, barHeight);
+  fill(color(78, 79, 255));
+  rect(barPadding, barPadding, (dashCooldown - dashTimer) * barWidthScale * (dashTimer >= 0), barHeight - barPadding * 2, barHeight);
+
+  
+  fill("grey");
+  rect(width - barPadding, barPadding, dashCooldown * barWidthScale, barHeight - barPadding * 2);
+  fill("red");
+  rect(width - barPadding, barPadding, (dashCooldown - dashTimer) * barWidthScale * (dashTimer >= 0), barHeight - barPadding * 2);
+  
 }
 
 
