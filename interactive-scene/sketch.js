@@ -43,6 +43,11 @@ let lazerWarningTime = 80;
 let lazerOnTime = 120;
 
 
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
+
+
 function playerDash() {
   if (dashTimer > 0) {
     dashTimer--;
@@ -186,17 +191,17 @@ function topBar() {
   fill("black");
   rect(0, 0, width, barHeight);
 
-  fill("grey");
-  rect(barPadding, barPadding, dashCooldown * barWidthScale, barHeight - barPadding * 2, barHeight);
-  fill(color(78, 79, 255));
-  rect(barPadding, barPadding, (dashCooldown - dashTimer) * barWidthScale * (dashTimer >= 0), barHeight - barPadding * 2, barHeight);
 
-  
   fill("grey");
-  rect(width - barPadding, barPadding, dashCooldown * barWidthScale, barHeight - barPadding * 2);
+  rect(barPadding, barPadding, dashCooldown * barWidthScale + playerSize * 2, barHeight - barPadding * 2, barHeight);
+  fill(color(78, 79, 255));
+  rect(barPadding, barPadding, (dashCooldown - dashTimer) * barWidthScale * (dashTimer >= 0) + playerSize * 2, barHeight - barPadding * 2, barHeight);
+
+  fill("grey");
+  quad(width - barPadding - 200, barPadding, width - barPadding - 200, barHeight - barPadding, width - barPadding - 200, barPadding, width - barPadding - 200, barHeight - barPadding);
   fill("red");
-  rect(width - barPadding, barPadding, (dashCooldown - dashTimer) * barWidthScale * (dashTimer >= 0), barHeight - barPadding * 2);
-  
+  quad(width - barPadding - 200, barPadding, width - barPadding - 200, barHeight - barPadding, width - barPadding - 200, barPadding, width - barPadding - 200, barHeight - barPadding);
+
 }
 
 
