@@ -24,7 +24,9 @@ let dashLength = 8;
 
 let barHeight = 60;
 let barPadding = 10;
-let barWidthScale = 3;
+let dashBarWidthScale = 3;
+let healthBarWidth = 240
+let healthBarTilt = 24
 
 let rows;
 let columns;
@@ -191,16 +193,17 @@ function topBar() {
   fill("black");
   rect(0, 0, width, barHeight);
 
-
+  stroke("white");
   fill("grey");
-  rect(barPadding, barPadding, dashCooldown * barWidthScale + playerSize * 2, barHeight - barPadding * 2, barHeight);
+  rect(barPadding, barPadding, dashCooldown * dashBarWidthScale + playerSize * 2, barHeight - barPadding * 2, barHeight);
   fill(color(78, 79, 255));
-  rect(barPadding, barPadding, (dashCooldown - dashTimer) * barWidthScale * (dashTimer >= 0) + playerSize * 2, barHeight - barPadding * 2, barHeight);
+  rect(barPadding, barPadding, (dashCooldown - dashTimer) * dashBarWidthScale * (dashTimer >= 0) + playerSize * 2, barHeight - barPadding * 2, barHeight);
 
   fill("grey");
-  quad(width - barPadding - 200, barPadding, width - barPadding - 200, barHeight - barPadding, width - barPadding - 200, barPadding, width - barPadding - 200, barHeight - barPadding);
+  quad(width - barPadding - healthBarWidth - healthBarTilt, barPadding, width - barPadding - healthBarWidth, barHeight - barPadding, width - barPadding, barHeight - barPadding, width - barPadding - healthBarTilt, barPadding);
   fill("red");
-  quad(width - barPadding - 200, barPadding, width - barPadding - 200, barHeight - barPadding, width - barPadding - 200, barPadding, width - barPadding - 200, barHeight - barPadding);
+  quad(width - barPadding - healthBarWidth - healthBarTilt, barPadding, width - barPadding - healthBarWidth, barHeight - barPadding, width - barPadding, barHeight - barPadding, width - barPadding - healthBarTilt, barPadding);
+  noStroke();
 
 }
 
@@ -214,7 +217,7 @@ function drawBackground() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  noStroke();
+  strokeWeight(3);
 
   playerX = width / 2;
   playerY = height / 2;
@@ -226,13 +229,13 @@ function setup() {
 function draw() {
   drawBackground();
 
+  drawCircle();
+
   topBar();
 
   playerDash();
 
   playerMove();
-
-  drawCircle();
 
   lazers();
 }
