@@ -4,6 +4,7 @@
 - [Moving Square](moving-square)
 - [Image Demo](image-demo)
 - [Traffic Light](traffic-light)
+- [Perlin Noise](perlin-noise)
 
 ## Projects
 - [Interactive Scene](interactive-scene)
