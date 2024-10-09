@@ -7,6 +7,8 @@ let playerY;
 let PlayerAcceleration = 1.5;
 let playerDX = 0;
 let playerDY = 0;
+let playerJumpSpeed = 30;
+let gravity = .5;
 let playerMaxSpeed = 13;
 let PlayerMinSpeed = 1;
 let playerDelecration = 0.85;
@@ -31,7 +33,11 @@ function draw() {
 
 
 function playerJump(){
-  
+  if (playerY === height - playerSize && keyIsDown(32)){
+    playerDY = playerJumpSpeed;
+  } else{
+
+  }
 }
 
 
@@ -59,3 +65,10 @@ function playerMove(){
     playerDX = 0;
   }
 }
+
+
+function windowResized() {
+  // Resizes the game if the window size changes
+  resizeCanvas(windowWidth, windowHeight);
+}
+
