@@ -49,7 +49,7 @@ let laserTimeLoss = 5;
 let laserRound = 0;
 let minCooldown = 15;
 
-let titleText = 'L A S E R    D A S H';
+let titleText = "L A S E R    D A S H";
 let titleXShitf = 6;
 let titleYShift = 0;
 let textColorGradients;
@@ -194,9 +194,10 @@ function lasers() {
     rows = random(minRows, maxRows);
 
     if (rows > midRows) {
-      columns = random(minColumns, midColumns)
-    } else {
-      columns = random(midColumns, maxColumns)
+      columns = random(minColumns, midColumns);
+    }
+    else {
+      columns = random(midColumns, maxColumns);
     }
 
     laserMode = 1;
@@ -210,8 +211,9 @@ function lasers() {
     laserRound++;
     if (laserCooldownTime - laserTimeLoss * laserRound > minCooldown) {
       laserTimer = laserCooldownTime - laserTimeLoss * laserRound;
-    } else{
-      laserTimer = minCooldown
+    }
+    else{
+      laserTimer = minCooldown;
     }
     
     laserMode = 0;
@@ -273,12 +275,13 @@ function topBar() {
 
 function title() {
   // Creates the top title
+  // eslint-disable-next-line no-undef
   textStyle(BOLDITALIC);
   textAlign(CENTER, CENTER);
   textSize(50);
   // Creates multiple layers of text to make a gradient illusion
   for (let textNumber = 0; textNumber < textColorGradients.length; textNumber++) {
-    fill(textColorGradients[textNumber])
+    fill(textColorGradients[textNumber]);
     text(titleText, width / 2 + titleXShitf * (textColorGradients.length - textNumber), barHeight / 2 + titleYShift * (textColorGradients.length - textNumber));
   }
 }
@@ -304,7 +307,7 @@ function setup() {
   // Sets the laser's base color
   laserColor = color(230, 0, 0);
   // Sets the Gradient for the titles
-  textColorGradients = [color(255, 193, 0), color(255, 154, 0), color(255, 116, 0), color(255, 77, 0), color(255, 0, 0)]
+  textColorGradients = [color(255, 193, 0), color(255, 154, 0), color(255, 116, 0), color(255, 77, 0), color(255, 0, 0)];
 }
 
 

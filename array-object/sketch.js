@@ -7,8 +7,8 @@ let playerY;
 let PlayerAcceleration = 1.5;
 let playerDX = 0;
 let playerDY = 0;
-let playerJumpSpeed = 30;
-let gravity = .5;
+let playerJumpSpeed = 14;
+let gravity = 0.5;
 let playerMaxSpeed = 13;
 let PlayerMinSpeed = 1;
 let playerDelecration = 0.85;
@@ -24,19 +24,31 @@ function draw() {
   background(256);
 
   playerMove();
+  playerJump();
 
   playerX += playerDX;
+  playerY -= playerDY;
 
   fill("black");
   square(playerX, playerY, playerSize, playerCurve);
 }
 
 
+function drawPlayer() {
+  
+}
+
+
 function playerJump(){
   if (playerY === height - playerSize && keyIsDown(32)){
     playerDY = playerJumpSpeed;
-  } else{
-
+  }
+  else if (playerY < height - playerSize) {
+    playerDY -= gravity;
+  }
+  else {
+    playerDY = 0;
+    playerY = height - playerSize;
   }
 }
 
