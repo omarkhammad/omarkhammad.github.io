@@ -6,6 +6,7 @@
 - [Traffic Light](traffic-light)
 - [Perlin Noise](perlin-noise)
 - [Terrain Generation](terrain)
+- [Bubble Object Demo](bubble)
 
 ## Projects
 - [Interactive Scene](interactive-scene)
