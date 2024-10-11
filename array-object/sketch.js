@@ -13,42 +13,81 @@ let playerMaxSpeed = 13;
 let PlayerMinSpeed = 1;
 let playerDelecration = 0.85;
 
+let floorHeight = 50;
+
+let theTargets = [];
+let targetSize = 20;
+let targetSpeed = 15;
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  noStroke();
+
+  // window.setInterval(spawnTarget);
 
   playerX = (width - playerSize) / 2;
   playerY = height - playerSize;
 }
 
 function draw() {
-  background(256);
+  background("lightBlue");
 
   playerMove();
+
   playerJump();
 
-  playerX += playerDX;
-  playerY -= playerDY;
+  calculatePlayerMovement();
 
+  drawPlayer();
+
+  drawFloor();
+}
+
+
+function drawFloor() {
+  fill("green");
+  rect(0, height - floorHeight, width, floorHeight);
+}
+
+
+function calculatePlayerMovement() {
+  if (playerX + playerDX <= 0 ) {
+    playerX = 0;
+    playerDX *= 0.5;
+  }
+  else if (playerX + playerDX >= width - playerSize) {
+    playerX = width - playerSize;
+    playerDX *= 0.5;
+  }
+  else {
+    playerX += playerDX;
+  }
+  
+
+  if (playerY > height - playerSize - floorHeight) {
+    playerY = height - playerSize - floorHeight;
+  }
+  else {
+    playerY -= playerDY;
+  }
+}
+
+
+function drawPlayer() {
   fill("black");
   square(playerX, playerY, playerSize, playerCurve);
 }
 
 
-function drawPlayer() {
-  
-}
-
-
 function playerJump(){
-  if (playerY === height - playerSize && keyIsDown(32)){
+  if (playerY === height - playerSize - floorHeight && keyIsDown(32)){
     playerDY = playerJumpSpeed;
   }
-  else if (playerY < height - playerSize) {
+  else if (playerY < height - playerSize - floorHeight) {
     playerDY -= gravity;
   }
   else {
     playerDY = 0;
-    playerY = height - playerSize;
   }
 }
 
