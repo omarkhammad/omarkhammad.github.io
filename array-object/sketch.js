@@ -18,12 +18,13 @@ let floorHeight = 50;
 let theTargets = [];
 let targetSize = 20;
 let targetSpeed = 15;
+let targetColor = "red";
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
 
-  // window.setInterval(spawnTarget);
+  window.setInterval(spawnTarget, 2000);
 
   playerX = (width - playerSize) / 2;
   playerY = height - playerSize;
@@ -38,9 +39,42 @@ function draw() {
 
   calculatePlayerMovement();
 
+  moveTargets();
+
+  drawTargets();
+
   drawPlayer();
 
   drawFloor();
+}
+
+
+function moveTargets(){
+  for (let target of theTargets){
+    let angle = atan2(playerY - target.y + playerSize / 2, playerX - target.x + playerSize / 2);
+    target.y += sin(angle) * targetSpeed;
+    target.x += cos(angle) * targetSpeed;
+  }
+}
+
+
+function drawTargets(){
+  for (let target of theTargets) {
+    fill(target.color);
+    circle(target.x, target.y, target.radius * 2);
+  }
+}
+
+
+function spawnTarget(){
+  let someTarget = {
+    x: random(0, width),
+    y: random(0, height),
+    speed: targetSpeed,
+    radius: targetSize,
+    color: targetColor,
+  };
+  theTargets.push(someTarget);
 }
 
 
