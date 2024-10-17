@@ -45,7 +45,6 @@ function setup() {
 function draw() {
   moveCamera();
 
-  //background("lightBlue");
   backgroundGradient();
 
   playerMove();
@@ -140,7 +139,8 @@ function drawTargets() {
 function spawnTarget() {
   let someTarget = {
     x: random(0, width),
-    y: ((height - playerY - floorHeight - playerSize - cameraMoveThreshold) * playerY > cameraMoveThreshold) - targetSpawnDistance,
+    // Fix Y
+    y: ((cameraMoveThreshold - playerY) * playerY > cameraMoveThreshold) - targetSpawnDistance,
     speed: targetSpeed,
     radius: targetSize,
     color: targetColor,
