@@ -36,10 +36,10 @@ function setup() {
   playerX = (width - playerSize) / 2;
   playerY = height - playerSize;
 
-  cameraMoveThreshold = height / 2;
+  cameraMoveThreshold = height / 3;
 
   c1 = color(255);
-  c2 = color(63, 191, 191);
+  c2 = color(63, 150, 255);
 }
 
 function draw() {
@@ -139,8 +139,7 @@ function drawTargets() {
 function spawnTarget() {
   let someTarget = {
     x: random(0, width),
-    // Fix Y
-    y: ((cameraMoveThreshold - playerY) * playerY > cameraMoveThreshold) - targetSpawnDistance,
+    y: cameraMoveThreshold + playerY - height,
     speed: targetSpeed,
     radius: targetSize,
     color: targetColor,

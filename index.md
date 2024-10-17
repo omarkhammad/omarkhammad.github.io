@@ -7,6 +7,7 @@
 - [Perlin Noise](perlin-noise)
 - [Terrain Generation](terrain)
 - [Bubble Object Demo](bubble)
+- [Trasnlate Rotate](translate-rotate)
 
 ## Projects
 - [Interactive Scene](interactive-scene)
