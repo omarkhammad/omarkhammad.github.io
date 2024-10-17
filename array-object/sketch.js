@@ -15,26 +15,38 @@ let PlayerMinSpeed = 1;
 let playerDelecration = 0.85;
 let playerHealth = 5;
 
-let floorHeight = 50;
+let floorHeight = 100;
 
 let theTargets = [];
-let targetSize = 20;
+let targetSize = 15;
 let targetSpeed = 7;
 let targetColor = "red";
+let targetSpawnDistance = targetSize;
+
+let cameraMoveThreshold;
+
+let c1, c2;
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  window.setInterval(spawnTarget, 900);
+  window.setInterval(spawnTarget, 1000);
 
   playerX = (width - playerSize) / 2;
   playerY = height - playerSize;
+
+  cameraMoveThreshold = height / 2;
+
+  c1 = color(255);
+  c2 = color(63, 191, 191);
 }
 
 function draw() {
-  translate(0, height - playerY - floorHeight- 200);
+  moveCamera();
 
-  background("lightBlue");
+  //background("lightBlue");
+  backgroundGradient();
 
   playerMove();
 
@@ -51,6 +63,28 @@ function draw() {
   drawPlayer();
 
   drawFloor();
+}
+
+
+function backgroundGradient() {
+  background(c1);
+
+  for(let y = -height; y < height; y++){
+    n = map(y, -height, height, 0, 1);
+    let newc = lerpColor(c1,c2,n);
+    stroke(newc);
+    line(0,y,width, y);
+  }
+}
+
+
+function moveCamera() {
+  if (playerY < cameraMoveThreshold) {
+    translate(0, cameraMoveThreshold - playerY);
+  }
+  else {
+    translate(0, 0);
+  }
 }
 
 
@@ -106,7 +140,7 @@ function drawTargets() {
 function spawnTarget() {
   let someTarget = {
     x: random(0, width),
-    y: 0,
+    y: ((height - playerY - floorHeight - playerSize - cameraMoveThreshold) * playerY > cameraMoveThreshold) - targetSpawnDistance,
     speed: targetSpeed,
     radius: targetSize,
     color: targetColor,
