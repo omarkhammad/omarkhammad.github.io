@@ -1,5 +1,7 @@
 // Headbud
 
+
+//turn into something cool
 let playerCurve = 5;
 let playerSize = 40;
 let playerX;
@@ -14,6 +16,9 @@ let playerMaxSpeed = 9;
 let PlayerMinSpeed = 1;
 let playerDelecration = 0.85;
 let playerHealth = 5;
+let playerStrokeSize = 5;
+let playerStrokeColor = "black";
+let playerFillGradient = [];
 
 let floorHeight = 100;
 
@@ -40,6 +45,14 @@ function setup() {
 
   c1 = color(255);
   c2 = color(63, 150, 255);
+
+  for (let i = 0; i < playerHealth; i++){
+    playerFillGradient.push(paletteLerp([
+      ["red", 0],
+      ["yellow", (playerHealth - 1) / 2],
+      ["green", playerHealth - 1]
+    ], i));
+  }
 }
 
 function draw() {
@@ -179,9 +192,11 @@ function calculatePlayerMovement() {
 
 
 function drawPlayer() {
-  noStroke();
-  fill("black");
-  square(playerX, playerY, playerSize, playerCurve);
+  stroke(playerStrokeColor);
+  strokeWeight(playerStrokeSize);
+  fill(playerFillGradient[playerHealth-1]);
+
+  square(playerX + playerStrokeSize / 2, playerY + playerStrokeSize / 2, playerSize - playerStrokeSize, playerCurve);
 }
 
 
