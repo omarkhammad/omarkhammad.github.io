@@ -1,24 +1,27 @@
 // Headbud
 
 
-//turn into something cool
-let playerCurve = 5;
-let playerSize = 40;
-let playerX;
-let playerY;
-let PlayerAcceleration = 2.5;
-let playerDX = 0;
-let playerDY = 0;
-let playerJumpSpeed = 14;
-let playerBumpSpeed = 14;
-let gravity = 0.5;
-let playerMaxSpeed = 9;
-let PlayerMinSpeed = 1;
-let playerDelecration = 0.85;
-let playerHealth = 5;
-let playerStrokeSize = 5;
-let playerStrokeColor = "black";
-let playerFillGradient = [];
+let player = {
+  curve: 5,
+  size: 40,
+  x:0,
+  y:0,
+  acceleration: 2.5,
+  dx: 0,
+  dy: 0,
+  jumpSpeed: 14,
+  bumpSpeed: 14,
+  gravity: 0.5,
+  maxSpeed: 9,
+  minSpeed: 1,
+  deceleration: 0.85,
+  health: 5,
+  strokeSize: 5,
+  strokeColor: "black",
+  fillGradient: [],
+  didBump: false,
+  maxBumpSpeed: 7
+};
 
 let floorHeight = 100;
 
@@ -27,30 +30,33 @@ let targetSize = 15;
 let targetSpeed = 7;
 let targetColor = "red";
 let targetSpawnDistance = targetSize;
+let toMerge = [];
 
 let cameraMoveThreshold;
 
-let c1, c2;
+let c1, c2, c3, c4;
 
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  window.setInterval(spawnTarget, 1000);
+  window.setInterval(spawnTarget, 500);
 
-  playerX = (width - playerSize) / 2;
-  playerY = height - playerSize;
+  player.x = (width - player.size) / 2;
+  player.y = height - player.size;
 
-  cameraMoveThreshold = height / 3;
+  cameraMoveThreshold = height / 7 * 4;
 
-  c1 = color(255);
-  c2 = color(63, 150, 255);
+  c1 = color(33, 130, 255);
+  c2 = color(225);
+  c3 = color("darkBlue");
+  c4 = color(0);
 
-  for (let i = 0; i < playerHealth; i++){
-    playerFillGradient.push(paletteLerp([
+  for (let i = 0; i < player.health; i++){
+    player.fillGradient.push(paletteLerp([
       ["red", 0],
-      ["yellow", (playerHealth - 1) / 2],
-      ["green", playerHealth - 1]
+      ["yellow", (player.health - 1) / 2],
+      ["green", player.health - 1]
     ], i));
   }
 }
@@ -68,7 +74,9 @@ function draw() {
 
   moveTargets();
 
-  checkTargetTouching();
+  checkTargetTouchingTarget();
+
+  checkTargetTouchingPlayer();
 
   drawTargets();
 
@@ -79,11 +87,11 @@ function draw() {
 
 
 function backgroundGradient() {
-  background(c1);
+  background(c4);
 
-  for(let y = -height; y < height; y++){
+  for(let y = (player.y < cameraMoveThreshold) * (player.y  - cameraMoveThreshold); y < (player.y < cameraMoveThreshold) * (player.y  - cameraMoveThreshold) + height; y++){
     n = map(y, -height, height, 0, 1);
-    let newc = lerpColor(c1,c2,n);
+    let newc = paletteLerp([[c4, -(height*2)], [c3, -height], [c2, 0], [c1, height]], y);
     stroke(newc);
     line(0,y,width, y);
   }
@@ -91,8 +99,8 @@ function backgroundGradient() {
 
 
 function moveCamera() {
-  if (playerY < cameraMoveThreshold) {
-    translate(0, cameraMoveThreshold - playerY);
+  if (player.y < cameraMoveThreshold) {
+    translate(0, cameraMoveThreshold - player.y);
   }
   else {
     translate(0, 0);
@@ -100,42 +108,78 @@ function moveCamera() {
 }
 
 
-function checkTargetTouching() {
+function checkTargetTouchingPlayer() {
   for (let target of theTargets) {
     let targetIndex = theTargets.indexOf(target);
     if (onTarget(target)) {
       theTargets.splice(targetIndex, 1);
-      playerBump();
+      player.didBump = true;
     }
-    else if (touchingTarget(target)) {
-      playerHealth--;
+    else if (targetTouchingPlayer(target)) {
+      player.health--;
       theTargets.splice(targetIndex, 1);
     }
   }
+  playerBump();
 }
 
 
 function playerBump() {
-  playerDY = playerBumpSpeed;
+  if (player.didBump) {
+    player.dy = player.bumpSpeed;
+    player.didBump = false;
+  }
 }
 
 
 function onTarget(target) {
-  return touchingTarget(target) && playerDY < 5 && playerY + playerSize / 2 < target.y;
+  return targetTouchingPlayer(target) && player.dy < player.maxBumpSpeed && player.y + player.size / 2 < target.y;
 }
 
 
-function touchingTarget(target) {
-  return dist(target.x, target.y, playerX + playerSize / 2, playerY + playerSize / 2) < playerSize / 2 + target.radius;
+function targetTouchingPlayer(target) {
+  return dist(target.x, target.y, player.x + player.size / 2, player.y + player.size / 2) < player.size / 2 + target.radius;
 }
 
 
 function moveTargets() {
   for (let target of theTargets) {
-    let angle = atan2(playerY - target.y + playerSize / 2, playerX - target.x + playerSize / 2);
+    let angle = atan2(player.y - target.y + player.size / 2, player.x - target.x + player.size / 2);
     target.y += sin(angle) * targetSpeed;
     target.x += cos(angle) * targetSpeed;
   }
+}
+
+
+function checkTargetTouchingTarget() {
+  toMerge = [];
+  for (let targetIndex = 0; targetIndex < theTargets.length; targetIndex++) {
+    let target = theTargets[targetIndex];
+    for (let otherTargetIndex = targetIndex + 1; otherTargetIndex < theTargets.length; otherTargetIndex++) {
+      let otherTarget = theTargets[otherTargetIndex];
+      if (dist(target.x, target.y, otherTarget.x, otherTarget.y) < target.radius + otherTarget.radius) {
+        toMerge.push([target, otherTarget]);
+      }
+    }
+  }
+  for (let targetsToMerge of toMerge) {
+    mergeTargets(targetsToMerge[0], targetsToMerge[1]);
+  }
+}
+
+
+function mergeTargets(target1, target2) {
+  let someTarget = {
+    x: (target1.x + target2.x) / 2,
+    y: (target1.y + target2.y) / 2,
+    speed: (target1.speed + target2.speed) / 2,
+    radius: (target1.radius**2 + target2.radius**2)**0.5,
+    color: targetColor,
+  };
+  theTargets.push(someTarget);
+
+  theTargets.splice(theTargets.indexOf(target1), 1);
+  theTargets.splice(theTargets.indexOf(target2), 1);
 }
 
 
@@ -152,7 +196,7 @@ function drawTargets() {
 function spawnTarget() {
   let someTarget = {
     x: random(0, width),
-    y: cameraMoveThreshold + playerY - height,
+    y: (player.y < cameraMoveThreshold) * (player.y  - cameraMoveThreshold),
     speed: targetSpeed,
     radius: targetSize,
     color: targetColor,
@@ -169,46 +213,46 @@ function drawFloor() {
 
 
 function calculatePlayerMovement() {
-  if (playerX + playerDX <= 0) {
-    playerX = 0;
-    playerDX *= 0.5;
+  if (player.x + player.dx <= 0) {
+    player.x = 0;
+    player.dx *= 0.5;
   }
-  else if (playerX + playerDX >= width - playerSize) {
-    playerX = width - playerSize;
-    playerDX *= 0.5;
+  else if (player.x + player.dx >= width - player.size) {
+    player.x = width - player.size;
+    player.dx *= 0.5;
   }
   else {
-    playerX += playerDX;
+    player.x += player.dx;
   }
 
 
-  if (playerY > height - playerSize - floorHeight) {
-    playerY = height - playerSize - floorHeight;
+  if (player.y > height - player.size - floorHeight) {
+    player.y = height - player.size - floorHeight;
   }
   else {
-    playerY -= playerDY;
+    player.y -= player.dy;
   }
 }
 
 
 function drawPlayer() {
-  stroke(playerStrokeColor);
-  strokeWeight(playerStrokeSize);
-  fill(playerFillGradient[playerHealth-1]);
+  stroke(player.strokeColor);
+  strokeWeight(player.strokeSize);
+  fill(player.fillGradient[player.health-1]);
 
-  square(playerX + playerStrokeSize / 2, playerY + playerStrokeSize / 2, playerSize - playerStrokeSize, playerCurve);
+  square(player.x + player.strokeSize / 2, player.y + player.strokeSize / 2, player.size - player.strokeSize, player.curve);
 }
 
 
 function playerJump() {
-  if (playerY === height - playerSize - floorHeight && keyIsDown(32)) {
-    playerDY = playerJumpSpeed;
+  if (player.y === height - player.size - floorHeight && keyIsDown(32)) {
+    player.dy = player.jumpSpeed;
   }
-  else if (playerY < height - playerSize - floorHeight) {
-    playerDY -= gravity;
+  else if (player.y < height - player.size - floorHeight) {
+    player.dy -= player.gravity;
   }
   else {
-    playerDY = 0;
+    player.dy = 0;
   }
 }
 
@@ -216,25 +260,25 @@ function playerJump() {
 function playerMove() {
   if (keyIsDown(65)) { //A
     // Moves the player left
-    playerDX -= PlayerAcceleration;
-    if (playerDX < -playerMaxSpeed) {
-      playerDX = -playerMaxSpeed;
+    player.dx -= player.acceleration;
+    if (player.dx < -player.maxSpeed) {
+      player.dx = -player.maxSpeed;
     }
   }
   else if (keyIsDown(68)) { //D
     // Moves the player right
-    playerDX += PlayerAcceleration;
-    if (playerDX > playerMaxSpeed) {
-      playerDX = playerMaxSpeed;
+    player.dx += player.acceleration;
+    if (player.dx > player.maxSpeed) {
+      player.dx = player.maxSpeed;
     }
   }
-  else if (Math.abs(playerDX) > PlayerMinSpeed) {
+  else if (Math.abs(player.dx) > player.minSpeed) {
     // Decelerates the player horizontally
-    playerDX = playerDX * playerDelecration;
+    player.dx = player.dx * player.deceleration;
   }
   else {
     // Stops the player horizontally
-    playerDX = 0;
+    player.dx = 0;
   }
 }
 
