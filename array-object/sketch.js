@@ -15,7 +15,9 @@ let player = {
   maxSpeed: 9,
   minSpeed: 1,
   deceleration: 0.85,
+  startingHealth: 5,
   health: 5,
+  heal: 0.2,
   strokeSize: 5,
   strokeColor: "black",
   fillGradient: [],
@@ -39,6 +41,9 @@ let c1, c2, c3, c4;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  
+  textStyle(BOLDITALIC);
+  textAlign(CENTER, CENTER);
 
   window.setInterval(spawnTarget, 500);
 
@@ -51,38 +56,52 @@ function setup() {
   c2 = color(225);
   c3 = color("darkBlue");
   c4 = color(0);
-
-  for (let i = 0; i < player.health; i++){
-    player.fillGradient.push(paletteLerp([
-      ["red", 0],
-      ["yellow", (player.health - 1) / 2],
-      ["green", player.health - 1]
-    ], i));
-  }
 }
 
 function draw() {
-  moveCamera();
+  if (gameIsOver()) {
+    gameOver();
+  }
+  else{
+    moveCamera();
+  
+    backgroundGradient();
+  
+    playerMove();
+  
+    playerJump();
+  
+    calculatePlayerMovement();
+  
+    moveTargets();
+  
+    checkTargetTouchingTarget();
+  
+    checkTargetTouchingPlayer();
+  
+    drawTargets();
+  
+    drawPlayer();
+  
+    drawFloor();
+  }
+}
 
-  backgroundGradient();
 
-  playerMove();
+function gameOver() {
+  textSize(200);
 
-  playerJump();
+  fill(0);
+  text("Game Over", width / 2, height / 2);
 
-  calculatePlayerMovement();
+  fill("black");
+  textSize(40);
+  text("press F5 to restart", width / 2, height * 3 / 4);
+}
 
-  moveTargets();
 
-  checkTargetTouchingTarget();
-
-  checkTargetTouchingPlayer();
-
-  drawTargets();
-
-  drawPlayer();
-
-  drawFloor();
+function gameIsOver() {
+  return player.health <= 0;
 }
 
 
@@ -90,7 +109,6 @@ function backgroundGradient() {
   background(c4);
 
   for(let y = (player.y < cameraMoveThreshold) * (player.y  - cameraMoveThreshold); y < (player.y < cameraMoveThreshold) * (player.y  - cameraMoveThreshold) + height; y++){
-    n = map(y, -height, height, 0, 1);
     let newc = paletteLerp([[c4, -(height*2)], [c3, -height], [c2, 0], [c1, height]], y);
     stroke(newc);
     line(0,y,width, y);
@@ -113,10 +131,12 @@ function checkTargetTouchingPlayer() {
     let targetIndex = theTargets.indexOf(target);
     if (onTarget(target)) {
       theTargets.splice(targetIndex, 1);
-      player.didBump = true;
+      if (player.didBump < target.multiplier){
+        player.didBump = target.multiplier;
+      }
     }
     else if (targetTouchingPlayer(target)) {
-      player.health--;
+      player.health -= target.multiplier;
       theTargets.splice(targetIndex, 1);
     }
   }
@@ -126,7 +146,13 @@ function checkTargetTouchingPlayer() {
 
 function playerBump() {
   if (player.didBump) {
-    player.dy = player.bumpSpeed;
+    player.dy = player.bumpSpeed * player.didBump ** 0.33;
+
+    player.health += player.didBump * player.heal;
+    if (player.health > player.startingHealth) {
+      player.health = player.startingHealth;
+    }
+
     player.didBump = false;
   }
 }
@@ -175,6 +201,7 @@ function mergeTargets(target1, target2) {
     speed: (target1.speed + target2.speed) / 2,
     radius: (target1.radius**2 + target2.radius**2)**0.5,
     color: targetColor,
+    multiplier: target1.multiplier + target2.multiplier
   };
   theTargets.push(someTarget);
 
@@ -200,6 +227,7 @@ function spawnTarget() {
     speed: targetSpeed,
     radius: targetSize,
     color: targetColor,
+    multiplier: 1
   };
   theTargets.push(someTarget);
 }
@@ -238,7 +266,12 @@ function calculatePlayerMovement() {
 function drawPlayer() {
   stroke(player.strokeColor);
   strokeWeight(player.strokeSize);
-  fill(player.fillGradient[player.health-1]);
+
+  fill(paletteLerp([
+    ["red", 0],
+    ["yellow", player.startingHealth / 2],
+    ["green", player.startingHealth]
+  ], player.health));
 
   square(player.x + player.strokeSize / 2, player.y + player.strokeSize / 2, player.size - player.strokeSize, player.curve);
 }
