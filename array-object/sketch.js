@@ -207,7 +207,7 @@ function spawnTarget() {
 
 function drawFloor() {
   noStroke();
-  fill("green");
+  fill(0, 85, 0);
   rect(0, height - floorHeight, width, floorHeight);
 }
 
