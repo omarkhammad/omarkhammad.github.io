@@ -1,4 +1,4 @@
-// Headbutt
+// Bump Or Die
 
 
 let player = {
@@ -155,7 +155,7 @@ function bottomText() {
   textStyle(BOLD);
   textAlign(CENTER, CENTER);
   textSize(60);
-  text("Headbutt", width / 2, height - floorHeight / 2);
+  text("Jump or Die", width / 2, height - floorHeight / 2);
   // Displays controls
   textStyle(BOLD);
   textAlign(LEFT, TOP);
