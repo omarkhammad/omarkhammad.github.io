@@ -16,7 +16,6 @@ function setup() {
 }
 
 function draw() {
-  background(220);
 
   gridSize = random(1, 100);
   cellSize = height / gridSize;
