@@ -9,6 +9,8 @@
 - [Bubble Object Demo](bubble)
 - [Trasnlate Rotate](translate-rotate)
 - [Grid Demo](grid)
+- [Game Of Life](game-of-life)
+- [Rectangle Grid](rectangle-grid)
 
 ## Projects
 - [Interactive Scene](interactive-scene)

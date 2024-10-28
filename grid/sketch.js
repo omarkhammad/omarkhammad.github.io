@@ -9,7 +9,7 @@
 //             [0, 1, 1, 0]];
 
 let grid;
-let gridSize = 2;
+const GRID_SIZE = 10;
 let cellSize;
 let shouldToggleNeighbours = true;
 
@@ -20,8 +20,18 @@ function setup() {
   else {
     createCanvas(windowHeight, windowHeight);
   }
-  cellSize = height/gridSize;
-  grid = generateRandomGrid(gridSize, gridSize);
+  cellSize = height/GRID_SIZE;
+  grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
+}
+
+function windowResized() {
+  if (windowWidth < windowHeight) {
+    resizeCanvas(windowWidth, windowWidth);
+  }
+  else {
+    resizeCanvas(windowHeight, windowHeight);
+  }
+  cellSize = height/GRID_SIZE;
 }
 
 function draw() {
@@ -29,12 +39,40 @@ function draw() {
   displayGrid();
 }
 
+function mousePressed() {
+  let x = Math.floor(mouseX/cellSize);
+  let y = Math.floor(mouseY/cellSize);
+
+  //toggle self
+  toggleCell(x, y);
+
+  //toggle neighbours
+  if (shouldToggleNeighbours) {
+    toggleCell(x + 1, y);
+    toggleCell(x - 1, y);
+    toggleCell(x, y + 1);
+    toggleCell(x, y - 1);
+  }
+}
+
+function toggleCell(x, y) {
+  //make sure the cell you're toggling is in the grid
+  if (x >= 0 && y >= 0 && x < GRID_SIZE && y < GRID_SIZE) {
+    if (grid[y][x] === 1) {
+      grid[y][x] = 0;
+    }
+    else {
+      grid[y][x] = 1;
+    }
+  }
+}
+
 function keyPressed() {
   if (key === "r") {
-    grid = generateRandomGrid(gridSize, gridSize);
+    grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
   }
   if (key === "e") {
-    grid = generateEmptyGrid(gridSize, gridSize);
+    grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
   }
   if (key === "n") {
     shouldToggleNeighbours = !shouldToggleNeighbours;
@@ -42,13 +80,13 @@ function keyPressed() {
 }
 
 function displayGrid() {
-  for (let y = 0; y < gridSize; y++) {
-    for (let x = 0; x < gridSize; x++) {
-      if (grid[y][x]) {
-        fill("blue");
+  for (let y = 0; y < GRID_SIZE; y++) {
+    for (let x = 0; x < GRID_SIZE; x++) {
+      if (grid[y][x] === 1) {
+        fill("black");
       }
-      else {
-        fill("orange");
+      else if (grid[y][x] === 0) {
+        fill("white");
       }
       square(x * cellSize, y * cellSize, cellSize);
     }
@@ -62,10 +100,10 @@ function generateRandomGrid(cols, rows) {
     for (let x = 0; x < cols; x++) {
       //choose either 0 or 1, each 50% of the time
       if (random(100) < 50) {
-        newGrid[y].push(true);
+        newGrid[y].push(1);
       }
       else {
-        newGrid[y].push(false);
+        newGrid[y].push(0);
       }
     }
   }
@@ -82,54 +120,3 @@ function generateEmptyGrid(cols, rows) {
   }
   return newGrid;
 }
-
-function mouseClicked() {
-  let x = Math.floor(mouseX / cellSize);
-  let y = Math.floor(mouseY / cellSize);
-  toggleCell(x, y);
-
-  if (shouldToggleNeighbours) {
-    if (x > 0) {
-      toggleCell(x - 1, y);
-    }
-    
-    if (x < gridSize) {
-      toggleCell(x + 1, y);
-    }
-    
-    if (y > 0) {
-      toggleCell(x, y - 1);
-    }
-    
-    if (y < gridSize) {
-      toggleCell(x, y + 1);
-    }
-  }
-  if (allBlue()) {
-    nextLevel();
-  }
-}
-
-
-function toggleCell(x, y) {
-  grid[y][x] = !grid[y][x];
-}
-
-
-function allBlue() {
-  for (let y of grid) {
-    for (let x of grid) {
-      if (!grid[y][x]) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-
-function nextLevel() {
-  gridSize++;
-  generateRandomGrid(gridSize, gridSize);
-}
-
