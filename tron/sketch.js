@@ -2,12 +2,11 @@
 // Omar Hammad
 
 let p1 = {
-  x: 0,
-  y: 0,
   dx: 0,
   dy: 5,
   speed: 5,
-  size: 5
+  size: 5,
+  linePoints: [],
 };
 
 function setup() {
@@ -15,12 +14,21 @@ function setup() {
 
   p1.x = width / 2;
   p1.y = height / 2;
+  linePoints.push([p1.x, p1.y]);
 }
+
 
 function draw() {
   background(220);
   calculatePlayerMovment();
   displayPlayer();
+}
+
+
+function displayLine() {
+  for (let linePoint of p1.linePoints) {
+    
+  }
 }
 
 
