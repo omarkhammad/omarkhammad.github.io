@@ -1,6 +1,8 @@
 // Tron
 // Omar Hammad
 
+const BACKGROUND_COLOR = [255, 255, 255, 255];
+
 let p1 = {
   dx: 0,
   dy: 5,
@@ -11,6 +13,7 @@ let p1 = {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  willReadFrequently = true;
 
   p1.x = width / 2;
   p1.y = height / 2;
@@ -19,22 +22,26 @@ function setup() {
 
 
 function draw() {
-  background(220);
+  background(BACKGROUND_COLOR);
   calculatePlayerMovment();
-  displayPlayer();
   displayLine();
   playerTouchingLine();
+  displayPlayer();
 }
 
 
 function playerTouchingLine() {
   // Vertical Lines
-  for (let i = 0; i < p1.linePoints.length - 1; i += 2) {
-    let point1 = p1.linePoints[i];
-    let point2 = p1.linePoints[i + 1];
-
-    if (p1.x === point1 && )
+  if (get(p1.x + p1.dx, p1.y - p1.dy).toString() !== BACKGROUND_COLOR.toString()) {
+    console.log(get(p1.x + p1.dx, p1.y - p1.dy));
   }
+
+  //for (let i = 0; i < p1.linePoints.length - 1; i += 2) {
+  //  let point1 = p1.linePoints[i];
+  //  let point2 = p1.linePoints[i + 1];
+  //
+  //  if (p1.x === point1 && )
+  //}
 }
 
 
