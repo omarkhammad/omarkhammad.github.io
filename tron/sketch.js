@@ -1,7 +1,10 @@
 // Tron
 // Omar Hammad
 
-const BACKGROUND_COLOR = [255, 255, 255, 255];
+const BACKGROUND_COLOR = [0, 0, 0, 255];
+const EDGE_THICKNESS = 10;
+const EDGE_ROUNDNESS = 15;
+let edgeColor1, edgeColor2;
 
 let p1 = {
   dx: 0,
@@ -25,8 +28,10 @@ let p2 = {
 };
 
 let lineLength = 2000;
+let lastLineLength;
 
 const FPS = 60;
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -43,31 +48,51 @@ function setup() {
 
   savePoint(p1);
   savePoint(p2);
+
+  edgeColor1 = color("red");
+  edgeColor2 = color("blue");
+
+  for(let x=0; x<width; x++){
+    n = map(x,0,width,0,1);
+    let newc = lerpColor(edgeColor1, edgeColor2, n);
+    stroke(newc);
+    line(x, 0, x, height);
+  }
 }
 
 
 function draw() {
-  background(BACKGROUND_COLOR);
+  if (playerTouchingLine(p1)) {
 
-  calculatePlayerMovment(p1);
-  calculatePlayerMovment(p2);
+  } else if (playerTouchingLine(p2)) {
 
-  deleteLine(p1);
-  deleteLine(p2);
+  } else {
+    displayBackground();
 
-  displayLine(p1);
-  displayLine(p2);
+    calculatePlayerMovment(p1);
+    calculatePlayerMovment(p2);
 
-  playerTouchingLine(p1);
-  playerTouchingLine(p2);
+    deleteLine(p1);
+    deleteLine(p2);
 
-  displayPlayer(p1);
-  displayPlayer(p2);
+    displayLine(p1);
+    displayLine(p2);
+
+    displayPlayer(p1);
+    displayPlayer(p2);
+  }
+}
+
+
+function displayBackground() {
+  noStroke();
+  fill(BACKGROUND_COLOR);
+  rect(EDGE_THICKNESS, EDGE_THICKNESS, width - EDGE_THICKNESS * 2, height - EDGE_THICKNESS * 2, EDGE_ROUNDNESS);
 }
 
 
 function deleteLine(player) {
-  if (player.linePoints[0][2] < millis() - lineLength) {
+  if (player.linePoints.length && player.linePoints[0][2] < millis() - lineLength) {
     player.deletedLine = player.linePoints[0], player.linePoints[1];
     player.linePoints.splice(0, 1);
   }
@@ -75,6 +100,7 @@ function deleteLine(player) {
 
 
 function playerTouchingLine(player) {
+  console.log(BACKGROUND_COLOR.toString());
   if (get(player.x + player.dx, player.y - player.dy).toString() !== BACKGROUND_COLOR.toString()) {
     
   }
@@ -91,8 +117,16 @@ function displayLine(player) {
   beginShape();
 
   if (player.deletedLine.length) {
-    let y = Math.sign(player.deletedLine[1] - player.linePoints[0][1]) * (player.linePoints[0][2] - millis() + lineLength) * player.msToPixels + player.linePoints[0][1];
-    let x = Math.sign(player.deletedLine[0] - player.linePoints[0][0]) * (player.linePoints[0][2] - millis() + lineLength) * player.msToPixels + player.linePoints[0][0];
+    if (player.linePoints.length) {
+      lastPoint = player.linePoints[0];
+      lastLineLength = player.linePoints[0][2] - millis() + lineLength;
+    }
+    else {
+      lastPoint = [player.x, player.y];
+      lastLineLength = lineLength;
+    }
+    let y = Math.sign(player.deletedLine[1] - lastPoint[1]) * lastLineLength * player.msToPixels + lastPoint[1];
+    let x = Math.sign(player.deletedLine[0] - lastPoint[0]) * lastLineLength * player.msToPixels + lastPoint[0];
     vertex(x, y);
   }
 
