@@ -33,6 +33,19 @@ let lastLineLength;
 const FPS = 60;
 
 
+function preload() {
+  // connect to a p5party server
+  partyConnect(
+    "wss://demoserver.p5party.org",
+    "tron"
+  );
+}
+
+
+p1 = partyLoadShared("p1", p1);
+p2 = partyLoadShared("p2", p2);
+
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   frameRate(FPS);
@@ -64,9 +77,11 @@ function setup() {
 function draw() {
   if (playerTouchingLine(p1)) {
 
-  } else if (playerTouchingLine(p2)) {
+  }
+  else if (playerTouchingLine(p2)) {
 
-  } else {
+  }
+  else {
     displayBackground();
 
     calculatePlayerMovment(p1);
@@ -100,7 +115,6 @@ function deleteLine(player) {
 
 
 function playerTouchingLine(player) {
-  console.log(BACKGROUND_COLOR.toString());
   if (get(player.x + player.dx, player.y - player.dy).toString() !== BACKGROUND_COLOR.toString()) {
     
   }
