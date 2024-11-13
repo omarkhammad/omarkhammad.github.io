@@ -5,6 +5,11 @@ const BACKGROUND_COLOR = [0, 0, 0, 255];
 const EDGE_THICKNESS = 10;
 const EDGE_ROUNDNESS = 15;
 let edgeColor1, edgeColor2;
+let gameLost = 0;
+
+let titleXShitf = 6;
+let titleYShift = 0;
+let textColorGradients;
 
 let p1 = {
   dx: 0,
@@ -33,16 +38,16 @@ let lastLineLength;
 const FPS = 60;
 
 
-function preload() {
-  // connect to a p5party server
-  partyConnect(
-    "wss://demoserver.p5party.org",
-    "tron"
-  );
-
-  p1 = partyLoadShared("p1", p1);
-  p2 = partyLoadShared("p2", p2);
-}
+// function preload() {
+//   // connect to a p5party server
+//   partyConnect(
+//     "wss://demoserver.p5party.org",
+//     "tron"
+//   );
+// 
+//   p1 = partyLoadShared("p1", p1);
+//   p2 = partyLoadShared("p2", p2);
+// }
 
 
 
@@ -72,15 +77,13 @@ function setup() {
     stroke(newc);
     line(x, 0, x, height);
   }
+  
 }
 
 
 function draw() {
-  if (playerTouchingLine(p1)) {
-
-  }
-  else if (playerTouchingLine(p2)) {
-
+  if (0) {
+    gameOver();
   }
   else {
     displayBackground();
@@ -214,4 +217,26 @@ function keyPressed() {
 
 function savePoint(player) {
   player.linePoints.push([player.x, player.y, millis()]);
+}
+
+function gameOver() {
+  textSize(200);
+
+  // Displays the Game Over text and stops the game
+  for (let textNumber = 0; textNumber < textColorGradients.length; textNumber++) {
+    // Creates multiple layers of text to make a gradient illusion
+    fill(textColorGradients[textNumber]);
+    text("Game Over", width / 2 + titleXShitf * (textColorGradients.length - textNumber), height / 2 + titleYShift * (textColorGradients.length - textNumber));
+  }
+
+  // Displays instructions to restart
+  fill("black");
+  textSize(40);
+  text("press F5 to restart", width / 2, height * 3 / 4);
+}
+
+
+function windowResized() {
+  // Resizes the game if the window size changes
+  resizeCanvas(windowWidth, windowHeight);
 }
