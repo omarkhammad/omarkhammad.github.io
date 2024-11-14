@@ -5,6 +5,7 @@ const BACKGROUND_COLOR = [0, 0, 0, 255];
 const EDGE_THICKNESS = 10;
 const EDGE_ROUNDNESS = 15;
 let edgeColor1, edgeColor2;
+let gameWon = "";
 
 let titleXShitf = 10;
 let titleYShift = 0;
