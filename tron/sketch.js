@@ -5,9 +5,8 @@ const BACKGROUND_COLOR = [0, 0, 0, 255];
 const EDGE_THICKNESS = 10;
 const EDGE_ROUNDNESS = 15;
 let edgeColor1, edgeColor2;
-let gameLost = false;
 
-let titleXShitf = 6;
+let titleXShitf = 10;
 let titleYShift = 0;
 let textColorGradients;
 
@@ -18,7 +17,8 @@ let p1 = {
   size: 5,
   linePoints: [],
   deletedLine:[],
-  color: "red",
+  color: "Red",
+  lineSize: 10
 };
 
 
@@ -29,31 +29,20 @@ let p2 = {
   size: 5,
   linePoints: [],
   deletedLine:[],
-  color: "blue",
+  color: "Blue",
+  lineSize: 10
 };
 
-let lineLength = 2000;
+let lineLength = 5000;
 let lastLineLength;
 
 const FPS = 60;
 
 
-// function preload() {
-//   // connect to a p5party server
-//   partyConnect(
-//     "wss://demoserver.p5party.org",
-//     "tron"
-//   );
-// 
-//   p1 = partyLoadShared("p1", p1);
-//   p2 = partyLoadShared("p2", p2);
-// }
-
-
-
-
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  textStyle(BOLDITALIC);
+  textAlign(CENTER, CENTER);
   frameRate(FPS);
 
   p1.x = width / 4;
@@ -71,16 +60,24 @@ function setup() {
   edgeColor1 = color("red");
   edgeColor2 = color("blue");
 
-  textColorGradients = [color(255, 193, 0),
-    color(255, 154, 0),
-    color(255, 116, 0),
-    color(255, 77, 0),
-    color(255, 0, 0)];
+  textColorGradients = [color(255, 0, 0),
+    color(235, 0, 86),
+    color(205, 0, 126),
+    color(167, 0, 173),
+    color(0, 0, 255)];
+    
+  for(let x=0; x<width; x++){
+    n = map(x,0,width,0,1);
+    let newc = lerpColor(edgeColor1, edgeColor2, n);
+    stroke(newc);
+    line(x, 0, x, height);
+  }
+
 }
 
 
 function draw() {
-  if (gameLost) {
+  if (gameWon) {
     gameOver();
   }
   else {
@@ -98,20 +95,13 @@ function draw() {
     displayPlayer(p1);
     displayPlayer(p2);
 
-    // playerTouchingLine(p1);
-    // playerTouchingLine(p2);
+    playerTouchingLine(p1);
+    playerTouchingLine(p2);
   }
 }
 
 
 function displayBackground() {
-  for(let x=0; x<width; x++){
-    n = map(x,0,width,0,1);
-    let newc = lerpColor(edgeColor1, edgeColor2, n);
-    stroke(newc);
-    line(x, 0, x, height);
-  }
-
   noStroke();
   fill(BACKGROUND_COLOR);
   rect(EDGE_THICKNESS, EDGE_THICKNESS, width - EDGE_THICKNESS * 2, height - EDGE_THICKNESS * 2, EDGE_ROUNDNESS);
@@ -127,8 +117,13 @@ function deleteLine(player) {
 
 
 function playerTouchingLine(player) {
-  if (get(player.x + player.dx, player.y - player.dy).toString() !== BACKGROUND_COLOR.toString()) {
-    gameLost = player.color;
+  if (get(player.x + player.dx * 3, player.y - player.dy * 3).toString() !== BACKGROUND_COLOR.toString()) {
+    if (player.color === player.p1) {
+      gameWon = p2.color;
+    }
+    else {
+      gameWon = p1.color;
+    }
   }
 }
 
@@ -137,7 +132,7 @@ function displayLine(player) {
   noFill();
   strokeJoin(MITER);
   stroke(player.color);
-  strokeWeight(5);
+  strokeWeight(player.lineSize);
 
   beginShape();
 
@@ -228,16 +223,19 @@ function savePoint(player) {
 
 function gameOver() {
   textSize(200);
-
+  fill("black");
+  
   // Displays the Game Over text and stops the game
   for (let textNumber = 0; textNumber < textColorGradients.length; textNumber++) {
     // Creates multiple layers of text to make a gradient illusion
-    fill(textColorGradients[textNumber]);
-    text("Game Over", width / 2 + titleXShitf * (textColorGradients.length - textNumber), height / 2 + titleYShift * (textColorGradients.length - textNumber));
+    stroke(textColorGradients[textNumber]);
+    text(gameWon + " Wins", width / 2 + titleXShitf * (textColorGradients.length - textNumber), height / 2 + titleYShift * (textColorGradients.length - textNumber));
   }
 
   // Displays instructions to restart
+  stroke("white");
   fill("black");
+  strokeWeight(3);
   textSize(40);
   text("press F5 to restart", width / 2, height * 3 / 4);
 }
