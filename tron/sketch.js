@@ -5,7 +5,7 @@ const BACKGROUND_COLOR = [0, 0, 0, 255];
 const EDGE_THICKNESS = 10;
 const EDGE_ROUNDNESS = 15;
 let edgeColor1, edgeColor2;
-let gameLost = 0;
+let gameLost = false;
 
 let titleXShitf = 6;
 let titleYShift = 0;
@@ -71,18 +71,16 @@ function setup() {
   edgeColor1 = color("red");
   edgeColor2 = color("blue");
 
-  for(let x=0; x<width; x++){
-    n = map(x,0,width,0,1);
-    let newc = lerpColor(edgeColor1, edgeColor2, n);
-    stroke(newc);
-    line(x, 0, x, height);
-  }
-  
+  textColorGradients = [color(255, 193, 0),
+    color(255, 154, 0),
+    color(255, 116, 0),
+    color(255, 77, 0),
+    color(255, 0, 0)];
 }
 
 
 function draw() {
-  if (0) {
+  if (gameLost) {
     gameOver();
   }
   else {
@@ -99,11 +97,21 @@ function draw() {
 
     displayPlayer(p1);
     displayPlayer(p2);
+
+    // playerTouchingLine(p1);
+    // playerTouchingLine(p2);
   }
 }
 
 
 function displayBackground() {
+  for(let x=0; x<width; x++){
+    n = map(x,0,width,0,1);
+    let newc = lerpColor(edgeColor1, edgeColor2, n);
+    stroke(newc);
+    line(x, 0, x, height);
+  }
+
   noStroke();
   fill(BACKGROUND_COLOR);
   rect(EDGE_THICKNESS, EDGE_THICKNESS, width - EDGE_THICKNESS * 2, height - EDGE_THICKNESS * 2, EDGE_ROUNDNESS);
@@ -120,10 +128,9 @@ function deleteLine(player) {
 
 function playerTouchingLine(player) {
   if (get(player.x + player.dx, player.y - player.dy).toString() !== BACKGROUND_COLOR.toString()) {
-    
+    gameLost = player.color;
   }
 }
-
 
 
 function displayLine(player) {
