@@ -1,6 +1,8 @@
 // Tron
 // Omar Hammad
 
+// PLEASE CLICK THE SCREEN FOR SOUND TO PLAY
+
 // Extra for expert features:
 // 1. Background gradient written with code
 // 2. Player turns are stored in a 2D Array as [x, y, time of turn] & removes the turns based on the time the turns were made
@@ -25,6 +27,8 @@ let LINE_LENGTH = 5000;
 
 // Last deleted turn taken
 let lastLineLength;
+
+let turnSound;
 
 const FPS = 60;
 
@@ -51,6 +55,11 @@ let playerTwo = {
   color: "Blue",
   lineSize: 10
 };
+
+// Preloads sound
+function preload() {
+  turnSound = loadSound('turn.mp3');
+}
 
 
 function setup() {
@@ -159,8 +168,8 @@ function drawGradient() {
   let edgeColor2 = color("blue");
   
   // Creates different vertical lines for every X coordinate
-  for(let x=0; x<width; x++){
-    n = map(x,0,width,0,1);
+  for(let x = 0; x < width; x++){
+    n = map(x, 0, width, 0, 1);
     let newc = lerpColor(edgeColor1, edgeColor2, n);
     stroke(newc);
     line(x, 0, x, height);
@@ -276,6 +285,8 @@ function keyPressed() {
 function savePoint(player) {
   // Saves player's turn coordinates to the player's 2D array
   player.linePoints.push([player.x, player.y, millis()]);
+  // Plays turn sound
+  turnSound.play();
 }
 
 
@@ -303,5 +314,4 @@ function windowResized() {
   // Resizes the game if the window size changes
   resizeCanvas(windowWidth, windowHeight);
 }
-
 // Hey look! The number of lines of code is prime!
