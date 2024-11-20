@@ -14,6 +14,7 @@
 - [Character In Grid](character-in-grid)
 - [Walker OOP](16-walker-oop)
 - [Fireworks OOP](fireworks-oop)
+- [Connected Nodes OOP](nodes)
 
 ## Projects
 - [Interactive Scene](interactive-scene)
