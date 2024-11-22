@@ -15,6 +15,7 @@
 - [Walker OOP](16-walker-oop)
 - [Fireworks OOP](fireworks-oop)
 - [Connected Nodes OOP](nodes)
+- [Collide 2D demo](collide)
 
 ## Projects
 - [Interactive Scene](interactive-scene)
