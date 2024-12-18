@@ -18,6 +18,7 @@
 - [Collide 2D Demo](collide)
 - [Local Storage Demo](local-storage)
 - [Fractal Circle](fractal-circle)
+- [Sierpinski Triangle](sierpinski-triangle)
 
 ## Projects
 - [Interactive Scene](interactive-scene)
