@@ -17,6 +17,7 @@
 - [Connected Nodes OOP](nodes)
 - [Collide 2D Demo](collide)
 - [Local Storage Demo](local-storage)
+- [Fractal Circle](fractal-circle)
 
 ## Projects
 - [Interactive Scene](interactive-scene)
